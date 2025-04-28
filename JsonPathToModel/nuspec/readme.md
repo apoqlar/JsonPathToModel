@@ -57,6 +57,10 @@ public class SampleNested
 
 **Release Notes**
 
+**2.0.0+**
+- support of DateTimeOffset and DateOnly with tests
+- migrated to .NET9
+
 **1.6.0+**
 - added HackingExtensions: WithHack, StealValue, StealString
 - upgraded System.Text.Json to 8.0.5

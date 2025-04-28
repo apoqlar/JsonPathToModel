@@ -187,6 +187,45 @@ public class SetValueTests
     }
 
     [Fact]
+    public void SetValue_Support_DateTimeOffset()
+    {
+        var test = (IJsonPathModelNavigator navi) =>
+        {
+            var data = new SampleModelDates();
+
+            // DateTimeOffset
+            navi.SetValue(data, "$.Nested.Date", new DateTimeOffset(new DateTime(2025,10,1)));
+            Assert.Equal(data.Nested.Date, navi.GetValue(data, "$.Nested.Date"));
+
+            navi.SetValue(data, "$.Nested.DateNullable", new DateTimeOffset(new DateTime(2025, 1, 22)));
+            Assert.Equal(data.Nested.DateNullable, navi.GetValue(data, "$.Nested.DateNullable"));
+
+            navi.SetValue(data, "$.Nested.DateNullable", null);
+            Assert.Equal(data.Nested.DateNullable, navi.GetValue(data, "$.Nested.DateNullable"));
+
+            // DateOnly
+            navi.SetValue(data, "$.Nested.DateOnly", DateOnly.FromDateTime(DateTime.Now));
+            Assert.Equal(data.Nested.DateOnly, navi.GetValue(data, "$.Nested.DateOnly"));
+
+            navi.SetValue(data, "$.Nested.DateOnlyNullable", DateOnly.FromDateTime(DateTime.Now));
+            Assert.Equal(data.Nested.DateOnlyNullable, navi.GetValue(data, "$.Nested.DateOnlyNullable"));
+
+            navi.SetValue(data, "$.Nested.DateOnlyNullable", null);
+            Assert.Equal(data.Nested.DateOnlyNullable, navi.GetValue(data, "$.Nested.DateOnlyNullable"));
+        };
+
+        // use reflection
+        var svc = ConfigHelper.GetConfigurationServices();
+        var navi = svc.GetService<IJsonPathModelNavigator>();
+        test(navi);
+
+        // use optimisation
+        svc = ConfigHelper.GetConfigurationServices(true);
+        navi = svc.GetService<IJsonPathModelNavigator>();
+        test(navi);
+    }
+
+    [Fact]
     public void SetValue_ShouldSetValue_ToExpandoObject()
     {
         //ToDo:

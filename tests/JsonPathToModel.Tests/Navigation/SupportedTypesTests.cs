@@ -102,6 +102,44 @@ public class SupportedTypesTests
         test(navi);
     }
 
+    [Fact]
+    public void Supports_DateTimeOffsetTypes()
+    {
+        var test = (IJsonPathModelNavigator navi) =>
+        {
+            var data = new HostModel2();
+            data.Nested.Date = DateTimeOffset.Now;
+            data.Nested.DateNullable = DateTimeOffset.Now;
+
+            // DateOnly - not supported by AutoFixture
+            Assert.Equal(data.Nested.Date, navi.GetValueResult(data, "$.Nested.Date").Value);
+            Assert.Equal(data.Nested.DateNullable, navi.GetValueResult(data, "$.Nested.DateNullable").Value);
+            data.Nested.DateNullable = null;
+            Assert.Equal(data.Nested.DateNullable, navi.GetValueResult(data, "$.Nested.DateNullable").Value);
+        };
+
+        // use reflection
+        var svc = ConfigHelper.GetConfigurationServices();
+        var navi = svc.GetService<IJsonPathModelNavigator>();
+        test(navi);
+
+        // use optimisation
+        svc = ConfigHelper.GetConfigurationServices(true);
+        navi = svc.GetService<IJsonPathModelNavigator>();
+        test(navi);
+    }
+
+    public class HostModel2
+    {
+        public DateTimeOffsetDataModel Nested { get; set; } = new();
+    }
+
+    public class DateTimeOffsetDataModel
+    {
+        public DateTimeOffset Date { get; set; }
+        public DateTimeOffset? DateNullable { get; set; }
+    }
+
     public class HostModel
     {
         public DateOnlyDataModel Nested { get; set; } = new();

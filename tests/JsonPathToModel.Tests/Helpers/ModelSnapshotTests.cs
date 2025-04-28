@@ -66,6 +66,28 @@ public partial class ModelSnapshotTests
     }
 
     [Fact]
+    public void ModelSnapshot_Imports_And_Exports_DateValues()
+    {
+        var date = new DateTime(1970, 10, 19);
+        var model = new ModelSnapshot();
+
+        var target = new SampleTargetDates()
+        {
+            ModelDate = date,
+            ModelDateOnly = DateOnly.FromDateTime(date),
+            ModelDateTimeOffset = date,
+        };
+
+        model.ImportFrom(target);
+        var target2 = new SampleTargetDates();
+        model.ExportTo(target2);
+
+        Assert.Equal(target.ModelDate, target2.ModelDate);
+        Assert.Equal(target.ModelDateOnly, target2.ModelDateOnly);
+        Assert.Equal(target.ModelDateTimeOffset, target2.ModelDateTimeOffset);
+    }
+
+    [Fact]
     public void ModelSnapshot_Should_Support_JsonIgnore()
     {
         var date = new DateTime(1970, 10, 19);
@@ -184,6 +206,13 @@ public partial class ModelSnapshotTests
         model.ImportFrom(target, _importOptions);
         Assert.False(model.Records.ContainsKey("$._modelDate"));
         Assert.Equal(2, model.Records.Count());
+    }
+
+    public class SampleTargetDates
+    {
+        public DateTime? ModelDate { get; set; }
+        public DateOnly? ModelDateOnly { get; set; }
+        public DateTimeOffset? ModelDateTimeOffset { get; set; }
     }
 
     public class SampleTarget
