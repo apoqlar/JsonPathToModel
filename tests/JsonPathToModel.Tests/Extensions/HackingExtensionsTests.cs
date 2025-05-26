@@ -67,6 +67,52 @@ public class HackingExtensionsTests
         var exc = Assert.Throws<NavigationException>(() =>  target.WithHack("_getProperty", "test"));
         Assert.Contains("_getProperty", exc.Message);
     }
+
+    [Fact]
+    public void HackingExtensions_ExecutePrivate_Throws_Exception()
+    {
+        var target = new HackingExtensionsTestsSample();
+        var exc = Assert.Throws<ArgumentException>(() => target.ExecutePrivate("WrongMethod", "test", 3.0));
+        Assert.Contains("WrongMethod", exc.Message);
+    }
+
+    [Fact]
+    public void HackingExtensions_ExecutePrivate_Executes_Method_With_Params()
+    {
+        var target = new HackingExtensionsTestsSample();
+        var result = target.ExecutePrivate("PrivateMethod", "test", 3M);
+        Assert.Equal("test3", result);
+    }
+
+    [Fact]
+    public void HackingExtensions_ExecutePrivateStatic_Throws_Exception()
+    {
+        var target = new HackingExtensionsTestsSample();
+        var exc = Assert.Throws<ArgumentException>(() => target.ExecutePrivateStatic("WrongStaticMethod", "test", 3.0));
+        Assert.Contains("WrongStaticMethod", exc.Message);
+    }
+
+    [Fact]
+    public void HackingExtensions_ExecutePrivateStatic_Executes_Method_With_Params()
+    {
+        var target = new HackingExtensionsTestsSample();
+        var result = target.ExecutePrivateStatic("PrivateStaticMethod", "test", 3M);
+        Assert.Equal("test3static", result);
+    }
+
+    [Fact]
+    public void HackingExtensions_Type_ExecutePrivateStatic_Throws_Exception()
+    {
+        var exc = Assert.Throws<ArgumentException>(() => typeof(HackingExtensionsTestsSample).ExecutePrivateStatic("WrongStaticMethod", "test", 3.0));
+        Assert.Contains("WrongStaticMethod", exc.Message);
+    }
+
+    [Fact]
+    public void HackingExtensions_Type_ExecutePrivateStatic_Executes_Method_With_Params()
+    {
+        var result = typeof(HackingExtensionsTestsSample).ExecutePrivateStatic("PrivateStaticMethod", "test", 3M);
+        Assert.Equal("test3static", result);
+    }
 }
 
 public class HackingExtensionsTestsSample
@@ -78,4 +124,14 @@ public class HackingExtensionsTestsSample
     internal object? _internal = null;
     protected object? _protected = null;
     public object? _getProperty { get; } = null;
+
+    private string PrivateMethod(string s, decimal d)
+    {
+        return s + d.ToString(); 
+    }
+
+    private static string PrivateStaticMethod(string s, decimal d)
+    {
+        return s + d.ToString() + "static";
+    }
 }

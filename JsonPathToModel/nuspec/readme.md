@@ -57,6 +57,10 @@ public class SampleNested
 
 **Release Notes**
 
+**2.1.0+**
+- added ExecutePrivate and ExecutePrivateStatic reflection extentions 
+
+
 **2.0.0+**
 - support of DateTimeOffset and DateOnly with tests
 - migrated to .NET9
