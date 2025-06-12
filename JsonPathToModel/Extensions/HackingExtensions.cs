@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace JsonPathToModel;
@@ -43,5 +44,41 @@ public static class HackingExtensions
         }
 
         return result;
+    }
+
+    public static object? ExecutePrivate(this object target, string methodName, params object[] parameters)
+    {
+        var method = target.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
+
+        if (method == null)
+        {
+            throw new ArgumentException($"Method {methodName} not found");
+        }
+
+        return method.Invoke(target, parameters);
+    }
+
+    public static object? ExecutePrivateStatic(this object target, string methodName, params object[] parameters)
+    {
+        var method = target.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
+
+        if (method == null)
+        {
+            throw new ArgumentException($"Method {methodName} not found");
+        }
+
+        return method.Invoke(null, parameters);
+    }
+
+    public static object? ExecutePrivateStatic(this Type target, string methodName, params object[] parameters)
+    {
+        var method = target.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
+
+        if (method == null)
+        {
+            throw new ArgumentException($"Method {methodName} not found");
+        }
+
+        return method.Invoke(null, parameters);
     }
 }
