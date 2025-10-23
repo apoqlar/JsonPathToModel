@@ -75,7 +75,7 @@ jobs:
         run: ls -al
 
       - name: Prep packages
-        run: dotnet nuget add source --username Sushi271 --password ${{ secrets.NUGET_PACKAGE_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/apoqlar/index.json"
+        run: dotnet nuget add source --username jenkins-vsi-health --password ${{ secrets.NUGET_PACKAGE_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/apoqlar/index.json"
 
       - name: Push package to GitHub packages
         run: dotnet nuget push ./*.nupkg --api-key ${{ secrets.NUGET_PACKAGE_TOKEN }} --source "github"
